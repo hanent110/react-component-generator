@@ -1,7 +1,7 @@
 ---
 name: create-pr
 description: |
-  현재 브랜치의 커밋과 diff를 분석해 PR 템플릿(references/pr-template.md)에 맞춰 제목과 본문을 작성하고 GitHub Pull Request를 생성한다.
+  현재 브랜치의 커밋과 diff를 분석해 PR 템플릿(references/pr-template-kr.md)에 맞춰 제목과 본문을 작성하고 GitHub Pull Request를 생성한다.
   "PR 만들어줘", "PR 올려줘", "풀리퀘스트 생성", "PR 해줘", "create a PR", "open a pull request", "/create-pr" 같은 요청에는 직접 `gh pr create`를 치지 말고 반드시 이 스킬을 사용한다.
   커밋은 이미 끝난 상태를 전제로 하며, 커밋 자체는 commit 스킬이 담당한다.
 context: fork
@@ -14,7 +14,7 @@ allowed-tools: Read Glob Grep Bash
 
 ## 설정
 
-- **PR_TEMPLATE_LANG: `kr`** — 이 프로젝트는 한국어 템플릿을 쓴다. `references/pr-template.md`에서 `kr` 섹션만 읽고 `en` 섹션은 사용하지 않는다. 영어로 바꾸려면 이 값만 `en`으로 고친다.
+- **PR_TEMPLATE_LANG: `kr`** — 이 프로젝트는 한국어 템플릿을 쓴다. 언어별로 파일이 분리되어 있다 — `references/pr-template-kr.md`만 읽고 `references/pr-template-en.md`는 읽지 않는다. 영어로 바꾸려면 이 값을 `en`으로 고친다(그러면 `-en` 파일만 읽는다).
 - **기본 base 브랜치: `main`**
 
 ## Step 0: 저장소 지침 확인
@@ -48,7 +48,7 @@ git diff --stat origin/main...HEAD
 
 ## Step 3: 제목과 본문 작성
 
-1. `references/pr-template.md`의 `kr` 섹션을 읽는다.
+1. `references/pr-template-<PR_TEMPLATE_LANG>.md` 파일(현재 `pr-template-kr.md`)만 읽는다. 다른 언어 파일은 열지 않는다.
 2. 템플릿의 섹션 구조와 순서를 그대로 유지하고 내용을 채운다. 해당 없는 섹션은 지우지 말고 "해당 없음"으로 적는다 — 리뷰어가 누락과 해당 없음을 구분할 수 있어야 한다.
 3. 제목은 `type: 한국어 요약.` 형식(feat/fix/refactor/chore/docs/test/style)으로 70자 이내. 커밋이 하나면 그 메시지를 그대로 쓴다.
 4. 본문은 임시 파일 없이 heredoc으로 `--body-file -`에 전달한다. 따옴표·백틱이 깨지지 않게 하기 위해서다.
