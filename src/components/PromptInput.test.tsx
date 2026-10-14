@@ -26,4 +26,41 @@ describe('PromptInput', () => {
     render(<PromptInput onGenerate={vi.fn()} isLoading={true} />);
     expect(screen.getByRole('button', { name: '생성 중...' })).toBeDisabled();
   });
+
+  describe('길이 제한 (500자)', () => {
+    const pasteText = async (text: string) => {
+      const user = userEvent.setup();
+      await user.click(screen.getByRole('textbox'));
+      await user.paste(text);
+      return user;
+    };
+
+    it('입력 중인 글자 수를 "n / 500" 으로 보여준다', async () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+      await pasteText('가'.repeat(12));
+      expect(screen.getByText('12 / 500')).toBeInTheDocument();
+    });
+
+    it('500자까지는 에러 없이 생성할 수 있다', async () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+      await pasteText('가'.repeat(500));
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '컴포넌트 생성' })).toBeEnabled();
+    });
+
+    it('501자부터는 에러 메시지를 보여주고 생성 버튼이 비활성이다', async () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+      await pasteText('가'.repeat(501));
+      expect(screen.getByRole('alert')).toHaveTextContent('500자 이하');
+      expect(screen.getByRole('button', { name: '컴포넌트 생성' })).toBeDisabled();
+    });
+
+    it('501자 이상이면 Ctrl+Enter 로도 제출되지 않는다', async () => {
+      const onGenerate = vi.fn();
+      render(<PromptInput onGenerate={onGenerate} isLoading={false} />);
+      const user = await pasteText('가'.repeat(501));
+      await user.keyboard('{Control>}{Enter}{/Control}');
+      expect(onGenerate).not.toHaveBeenCalled();
+    });
+  });
 });
