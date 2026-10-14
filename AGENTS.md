@@ -17,9 +17,10 @@
 
 ### Immutable
 
-- API 키 값은 서버 환경변수(`ENV_KEYS`, `server/index.ts:59-62`)와 요청 본문에만 존재한다. 응답, 로그, localStorage/sessionStorage, 쿼리스트링(클라이언트 측)에 키 값을 쓰지 않는다.
+- API 키 값은 서버 환경변수(`ENV_KEYS`, `server/index.ts:59-62`)와 요청 본문, 그리고 클라이언트의 localStorage(사용자 결정으로 허용)에만 존재한다. 서버 응답, 서버 로그, URL 쿼리스트링(클라이언트 측), sessionStorage·쿠키에는 키 값을 쓰지 않는다.
+  - **정정 (2026-10-14)**: 기존에는 localStorage도 금지였으나, 새로고침 후 상태 유지를 위해 사용자가 API 키의 localStorage 저장을 요청해 허용으로 바꿨다. 키는 provider별로 분리해 저장하고(`rcg:apiKeys`), 로그와 에러 메시지에는 여전히 쓰지 않는다.
   - `/api/config`는 키 보유 여부(boolean)만 반환한다 (`server/index.ts:150-153`). 값을 반환하도록 바꾸지 않는다.
-  - 클라이언트는 키를 `useState`에만 보관하고 (`src/App.tsx:14`) provider 전환 시 비운다 (`src/App.tsx:41-44`).
+  - 클라이언트 키는 provider별로 분리해 보관한다(전환 시 다른 provider의 키를 보내지 않기 위해).
 - `.env`는 커밋하지 않는다 (`.gitignore:32`). 워크트리에는 `.worktreeinclude`로만 복사된다.
 - `hiring-lab/resumes/`는 `.gitignore`에 등록되어 있다. 해당 디렉토리의 파일을 `git add`하지 않는다.
 
