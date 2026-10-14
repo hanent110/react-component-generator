@@ -4,6 +4,8 @@ import { validatePrompt, MAX_PROMPT_LENGTH } from '../utils/validatePrompt';
 interface PromptInputProps {
   onGenerate: (prompt: string) => void;
   isLoading: boolean;
+  history?: string[];
+  onClearHistory?: () => void;
 }
 
 const EXAMPLES = [
@@ -15,7 +17,7 @@ const EXAMPLES = [
   '테이블 행 상세보기 패널. 선택한 고객의 기본 정보와 최근 활동 표시',
 ];
 
-export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
+export function PromptInput({ onGenerate, isLoading, history = [], onClearHistory }: PromptInputProps) {
   const [prompt, setPrompt] = useState('');
   const validation = validatePrompt(prompt);
 
@@ -71,6 +73,28 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           {prompt.trim().length} / {MAX_PROMPT_LENGTH}
         </span>
       </div>
+      {history.length > 0 && (
+        <section className="prompt-history" aria-label="최근 프롬프트">
+          <div className="history-header">
+            <span className="examples-label">최근 프롬프트</span>
+            <button type="button" className="btn-clear-history" onClick={onClearHistory}>
+              기록 삭제
+            </button>
+          </div>
+          <div className="history-list">
+            {history.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="example-chip"
+                onClick={() => handleExampleClick(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
       <div className="prompt-examples">
         <span className="examples-label">예시 프롬프트</span>
         {EXAMPLES.map((example) => (

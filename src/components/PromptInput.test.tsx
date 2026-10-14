@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PromptInput } from './PromptInput';
 
@@ -61,6 +61,39 @@ describe('PromptInput', () => {
       const user = await pasteText('가'.repeat(501));
       await user.keyboard('{Control>}{Enter}{/Control}');
       expect(onGenerate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('프롬프트 히스토리', () => {
+    const historyRegion = () => screen.getByRole('region', { name: '최근 프롬프트' });
+
+    it('히스토리가 없으면 최근 프롬프트 영역을 보여주지 않는다', () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={[]} />);
+      expect(screen.queryByRole('region', { name: '최근 프롬프트' })).not.toBeInTheDocument();
+    });
+
+    it('히스토리 항목을 보여주고 클릭하면 입력창에 채운다', async () => {
+      const user = userEvent.setup();
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={['첫 번째', '두 번째']} />);
+
+      await user.click(within(historyRegion()).getByRole('button', { name: '두 번째' }));
+      expect(screen.getByRole('textbox')).toHaveValue('두 번째');
+    });
+
+    it('기록 삭제를 누르면 onClearHistory가 호출된다', async () => {
+      const onClearHistory = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <PromptInput
+          onGenerate={vi.fn()}
+          isLoading={false}
+          history={['a']}
+          onClearHistory={onClearHistory}
+        />,
+      );
+
+      await user.click(within(historyRegion()).getByRole('button', { name: '기록 삭제' }));
+      expect(onClearHistory).toHaveBeenCalledTimes(1);
     });
   });
 });

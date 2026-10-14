@@ -24,6 +24,6 @@ Vite + React 19 프론트엔드. `/api/*` 호출은 Vite 프록시를 통해 서
 
 ## Local Golden Rules
 
-- Security Boundary: `apiKey`는 `App.tsx`의 `useState`에만 둔다 (`App.tsx:14`). 영속 저장소에 쓰지 않는다. provider를 바꾸면 키를 비우는 동작(`App.tsx:41-44`)을 유지한다. 키 형식이 provider마다 다르기 때문이다 (`App.tsx:9-12`).
+- Security Boundary: API 키는 provider별로 분리해 보관하고 localStorage에만 영속화한다(사용자 결정, 정정 2026-10-14: 기존에는 영속 저장 금지였음). 선택된 provider의 키만 `/api/generate`로 보낸다. 키 형식이 provider마다 다르기 때문이다 (`App.tsx:9-12`). 키 값을 로그·에러 메시지에 쓰지 않는다.
 - Double Defense: 키 누락 검사가 `handleGenerate`(`App.tsx:34`)에도 있고 서버에도 있다. 클라이언트 검사는 UX용이므로 서버 응답의 `data.error`를 그대로 표시하는 경로(`useComponentGenerator.ts:32`)도 유지한다.
 - Hard Constraint: `LivePreview`의 `LiveError`는 생성 코드의 런타임 오류를 화면에 보여주는 유일한 경로다 (`LivePreview.tsx:18`). 제거하면 AI가 잘못된 코드를 만들었을 때 빈 화면만 보인다.
