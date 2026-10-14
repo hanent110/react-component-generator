@@ -346,6 +346,37 @@
   gap: 8px;
 }
 
+.prompt-history {
+  margin-top: 16px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.btn-clear-history {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.btn-clear-history:hover {
+  color: var(--danger);
+}
+
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
 .prompt-examples {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
